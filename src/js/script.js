@@ -1,5 +1,12 @@
 const rusKeyboard = (function() {
     const field = document.getElementById("textfield");
+    // список кнопок управления для firefox
+    const notIgnoreKeys = [
+        "Backspace",
+        "Delete",
+        "ArrowRight",
+        "ArrowLeft"
+    ];
     let keysBindingTable = [];
 
     function _init() {
@@ -21,9 +28,6 @@ const rusKeyboard = (function() {
         console.log("shiftKey - " + e.shiftKey);
         console.log("code - " + e.code);
 
-        // for (let i = 1072; i <= 1103; i++) {
-        //     console.log(String.fromCharCode(i));
-        // }
     }
 
     function _isLetter(code) {
@@ -37,19 +41,25 @@ const rusKeyboard = (function() {
     }
 
     function _keysEnter(e) {
+        // для firefox
+        for (let i = 0; i < notIgnoreKeys.length; i++) {
+            if (e.code ==  notIgnoreKeys[i]) {
+                return;
+            }
+        }       
+
         e.preventDefault();
 
         for (let i = 0; i < keysBindingTable.length; i++) {
             if (keysBindingTable[i].key == e.code) {
-                // console.log(keysBindingTable[i][e.shiftKey.toString()]);
                 field.value += keysBindingTable[i][e.shiftKey.toString()];
             }
         } 
     }
 
     function _initKeysBinding() {
-        // console.log(keysBindingTable);
         let binding = [];
+        let nums = [];
 
         binding["KeyQ"] = "й";
         binding["KeyW"] = "ц";
@@ -85,12 +95,32 @@ const rusKeyboard = (function() {
         binding["Period"] = "ю";
 
         for (let item in binding) {
-            // console.log(item + " - " + binding[item]);
             keysBindingTable.push(
                 {
                     key: item,
                     "false": binding[item],
                     "true": String.fromCharCode(binding[item].charCodeAt() - 32)
+                }
+            );
+        }
+
+        nums["Digit1"] = "!";
+        nums["Digit2"] = '"';
+        nums["Digit3"] = "№";
+        nums["Digit4"] = ";";
+        nums["Digit5"] = "%";
+        nums["Digit6"] = ":";
+        nums["Digit7"] = "?";
+        nums["Digit8"] = "*";
+        nums["Digit9"] = "(";
+        nums["Digit0"] = ")";
+
+        for (let item in nums) {
+            keysBindingTable.push(
+                {
+                    key: item,
+                    "false": nums[item],
+                    "true": nums[item]
                 }
             );
         }
@@ -113,33 +143,17 @@ const rusKeyboard = (function() {
 
         keysBindingTable.push(
             {
-                key: "Digit2",
-                "false": '"',
-                "true": '"'
+                key: "Equal",
+                "false": "=",
+                "true": "+"
             }
         );
 
         keysBindingTable.push(
             {
-                key: "Digit3",
-                "false": "№",
-                "true": "№"
-            }
-        );
-
-        keysBindingTable.push(
-            {
-                key: "Digit4",
-                "false": ";",
-                "true": ";"
-            }
-        );
-
-        keysBindingTable.push(
-            {
-                key: "Digit7",
-                "false": "?",
-                "true": "?"
+                key: "Minus",
+                "false": "-",
+                "true": "_"
             }
         );
 
@@ -147,7 +161,7 @@ const rusKeyboard = (function() {
             {
                 key: "Backslash",
                 "false": "/",
-                "true": "/"
+                "true": "\\"
             }
         );
 
@@ -160,22 +174,6 @@ const rusKeyboard = (function() {
         );
 
         console.log(keysBindingTable);
-        // binding.forEach(function(item, i) {
-        //     console.log(item + " - " + i);
-
-        // });
-
-        // keysBindingTable["Slash"][false] = ".";
-
-        // keysBindingTable["Key"][false] = "";
-        // keysBindingTable["Key"][false] = "";
-        // keysBindingTable["Key"][false] = "";
-        // keysBindingTable["Key"][false] = "";
-        // keysBindingTable["Key"][false] = "";
-        // keysBindingTable["Key"][false] = "";
-        // keysBindingTable["Key"][false] = "";
-      
-        
     }
 
     // возвращает код нажатой клавиши

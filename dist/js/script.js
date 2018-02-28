@@ -2,6 +2,8 @@
 
 var rusKeyboard = function () {
     var field = document.getElementById("textfield");
+    // список кнопок управления для firefox
+    var notIgnoreKeys = ["Backspace", "Delete", "ArrowRight", "ArrowLeft"];
     var keysBindingTable = [];
 
     function _init() {
@@ -22,10 +24,6 @@ var rusKeyboard = function () {
         console.log("charCode - " + e.charCode);
         console.log("shiftKey - " + e.shiftKey);
         console.log("code - " + e.code);
-
-        // for (let i = 1072; i <= 1103; i++) {
-        //     console.log(String.fromCharCode(i));
-        // }
     }
 
     function _isLetter(code) {
@@ -37,19 +35,25 @@ var rusKeyboard = function () {
     }
 
     function _keysEnter(e) {
+        // для firefox
+        for (var i = 0; i < notIgnoreKeys.length; i++) {
+            if (e.code == notIgnoreKeys[i]) {
+                return;
+            }
+        }
+
         e.preventDefault();
 
-        for (var i = 0; i < keysBindingTable.length; i++) {
-            if (keysBindingTable[i].key == e.code) {
-                // console.log(keysBindingTable[i][e.shiftKey.toString()]);
-                field.value += keysBindingTable[i][e.shiftKey.toString()];
+        for (var _i = 0; _i < keysBindingTable.length; _i++) {
+            if (keysBindingTable[_i].key == e.code) {
+                field.value += keysBindingTable[_i][e.shiftKey.toString()];
             }
         }
     }
 
     function _initKeysBinding() {
-        // console.log(keysBindingTable);
         var binding = [];
+        var nums = [];
 
         binding["KeyQ"] = "й";
         binding["KeyW"] = "ц";
@@ -85,11 +89,29 @@ var rusKeyboard = function () {
         binding["Period"] = "ю";
 
         for (var item in binding) {
-            // console.log(item + " - " + binding[item]);
             keysBindingTable.push({
                 key: item,
                 "false": binding[item],
                 "true": String.fromCharCode(binding[item].charCodeAt() - 32)
+            });
+        }
+
+        nums["Digit1"] = "!";
+        nums["Digit2"] = '"';
+        nums["Digit3"] = "№";
+        nums["Digit4"] = ";";
+        nums["Digit5"] = "%";
+        nums["Digit6"] = ":";
+        nums["Digit7"] = "?";
+        nums["Digit8"] = "*";
+        nums["Digit9"] = "(";
+        nums["Digit0"] = ")";
+
+        for (var _item in nums) {
+            keysBindingTable.push({
+                key: _item,
+                "false": nums[_item],
+                "true": nums[_item]
             });
         }
 
@@ -106,33 +128,21 @@ var rusKeyboard = function () {
         });
 
         keysBindingTable.push({
-            key: "Digit2",
-            "false": '"',
-            "true": '"'
+            key: "Equal",
+            "false": "=",
+            "true": "+"
         });
 
         keysBindingTable.push({
-            key: "Digit3",
-            "false": "№",
-            "true": "№"
-        });
-
-        keysBindingTable.push({
-            key: "Digit4",
-            "false": ";",
-            "true": ";"
-        });
-
-        keysBindingTable.push({
-            key: "Digit7",
-            "false": "?",
-            "true": "?"
+            key: "Minus",
+            "false": "-",
+            "true": "_"
         });
 
         keysBindingTable.push({
             key: "Backslash",
             "false": "/",
-            "true": "/"
+            "true": "\\"
         });
 
         keysBindingTable.push({
@@ -142,21 +152,6 @@ var rusKeyboard = function () {
         });
 
         console.log(keysBindingTable);
-        // binding.forEach(function(item, i) {
-        //     console.log(item + " - " + i);
-
-        // });
-
-        // keysBindingTable["Slash"][false] = ".";
-
-        // keysBindingTable["Key"][false] = "";
-        // keysBindingTable["Key"][false] = "";
-        // keysBindingTable["Key"][false] = "";
-        // keysBindingTable["Key"][false] = "";
-        // keysBindingTable["Key"][false] = "";
-        // keysBindingTable["Key"][false] = "";
-        // keysBindingTable["Key"][false] = "";
-
     }
 
     // возвращает код нажатой клавиши
