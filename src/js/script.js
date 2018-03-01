@@ -15,9 +15,11 @@ const rusKeyboard = (function() {
     }
 
     function _listerner(e) {
-
         if (e.code) {
             _keysEnter(e);
+        }
+        else if (e.locale) {
+            _altKeysEnter(e);
         }
 
         console.log(e);
@@ -27,7 +29,6 @@ const rusKeyboard = (function() {
         console.log("charCode - " + e.charCode);
         console.log("shiftKey - " + e.shiftKey);
         console.log("code - " + e.code);
-
     }
 
     function _isLetter(code) {
@@ -41,7 +42,9 @@ const rusKeyboard = (function() {
     }
 
     function _keysEnter(e) {
-        // для firefox
+        let upperCase;
+
+        // проверка для firefox
         for (let i = 0; i < notIgnoreKeys.length; i++) {
             if (e.code ==  notIgnoreKeys[i]) {
                 return;
@@ -50,11 +53,31 @@ const rusKeyboard = (function() {
 
         e.preventDefault();
 
+        upperCase = _capsLockIsActive(_getKeyCode(e), e.shiftKey) || e.shiftKey;
+        console.log(upperCase);
+
         for (let i = 0; i < keysBindingTable.length; i++) {
             if (keysBindingTable[i].key == e.code) {
-                field.value += keysBindingTable[i][e.shiftKey.toString()];
+                // field.value += keysBindingTable[i][e.shiftKey.toString()];
+                field.value += keysBindingTable[i][upperCase.toString()];
             }
         } 
+    }
+
+    // Альтернативная функция для IE9
+    function _altKeysEnter(e) {
+
+    }
+
+    function _capsLockIsActive(key, shift) {
+        if (((key >= 65 && key <= 90) || (key >= 1040 && key <= 1071) || (key == 1025)) &&
+            !shift) {
+                return true;
+            }
+            else {
+                return false;
+            }
+
     }
 
     function _initKeysBinding() {
@@ -177,7 +200,7 @@ const rusKeyboard = (function() {
     }
 
     // возвращает код нажатой клавиши
-    function getKeyCode(e) {
+    function _getKeyCode(e) {
         if (e.keyCode) {
             return e.keyCode;
         }
