@@ -5,8 +5,12 @@ var rusKeyboard = function () {
     // список кнопок управления для firefox
     var notIgnoreKeys = ["Backspace", "Delete", "ArrowRight", "ArrowLeft"];
     var keysBindingTable = [];
+    var altKeysBindingTable = void 0;
 
     function _init() {
+        altKeysBindingTable = initAltKeysBinding();
+        console.log(altKeysBindingTable);
+
         field.addEventListener("keypress", _listerner);
         _initKeysBinding();
     }
@@ -27,13 +31,15 @@ var rusKeyboard = function () {
         console.log("code - " + e.code);
     }
 
-    function _isLetter(code) {
-        if (code >= 97 && code <= 122 || code >= 65 && code <= 90) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+    // function _isLetter(code) {
+    //     if ((code >= 97 && code <= 122) ||
+    //         (code >= 65 && code <= 90)) {
+    //             return true;
+    //         }
+    //         else {
+    //             return false;
+    //         }
+    // }
 
     function _keysEnter(e) {
         var upperCase = void 0;
@@ -48,18 +54,37 @@ var rusKeyboard = function () {
         e.preventDefault();
 
         upperCase = _capsLockIsActive(_getKeyCode(e), e.shiftKey) || e.shiftKey;
-        console.log(upperCase);
 
         for (var _i = 0; _i < keysBindingTable.length; _i++) {
             if (keysBindingTable[_i].key == e.code) {
-                // field.value += keysBindingTable[i][e.shiftKey.toString()];
                 field.value += keysBindingTable[_i][upperCase.toString()];
             }
         }
     }
 
     // Альтернативная функция для IE9
-    function _altKeysEnter(e) {}
+    function _altKeysEnter(e) {
+        if (_isCyrillicLetter(e)) {
+            return;
+        }
+
+        e.preventDefault();
+
+        for (var item in altKeysBindingTable) {
+            if (item == e.key) {
+                field.value += altKeysBindingTable[item];
+            }
+        }
+    }
+
+    function _isCyrillicLetter(e) {
+        for (var item in altKeysBindingTable) {
+            if (altKeysBindingTable[item] == e.key && e.locale == "ru-RU") {
+                return true;
+            }
+        }
+        return false;
+    }
 
     function _capsLockIsActive(key, shift) {
         if ((key >= 65 && key <= 90 || key >= 1040 && key <= 1071 || key == 1025) && !shift) {

@@ -8,8 +8,12 @@ const rusKeyboard = (function() {
         "ArrowLeft"
     ];
     let keysBindingTable = [];
+    let altKeysBindingTable;
 
     function _init() {
+        altKeysBindingTable = initAltKeysBinding();
+        console.log(altKeysBindingTable);
+
         field.addEventListener("keypress", _listerner);
         _initKeysBinding();
     }
@@ -31,15 +35,15 @@ const rusKeyboard = (function() {
         console.log("code - " + e.code);
     }
 
-    function _isLetter(code) {
-        if ((code >= 97 && code <= 122) ||
-            (code >= 65 && code <= 90)) {
-                return true;
-            }
-            else {
-                return false;
-            }
-    }
+    // function _isLetter(code) {
+    //     if ((code >= 97 && code <= 122) ||
+    //         (code >= 65 && code <= 90)) {
+    //             return true;
+    //         }
+    //         else {
+    //             return false;
+    //         }
+    // }
 
     function _keysEnter(e) {
         let upperCase;
@@ -54,11 +58,9 @@ const rusKeyboard = (function() {
         e.preventDefault();
 
         upperCase = _capsLockIsActive(_getKeyCode(e), e.shiftKey) || e.shiftKey;
-        console.log(upperCase);
 
         for (let i = 0; i < keysBindingTable.length; i++) {
             if (keysBindingTable[i].key == e.code) {
-                // field.value += keysBindingTable[i][e.shiftKey.toString()];
                 field.value += keysBindingTable[i][upperCase.toString()];
             }
         } 
@@ -66,7 +68,26 @@ const rusKeyboard = (function() {
 
     // Альтернативная функция для IE9
     function _altKeysEnter(e) {
+        if (_isCyrillicLetter(e)) {
+            return;
+        }
 
+        e.preventDefault();
+
+        for(let item in altKeysBindingTable) {
+            if (item == e.key) {
+                field.value += altKeysBindingTable[item];
+            }
+        } 
+    }
+
+    function _isCyrillicLetter(e) {       
+        for(let item in altKeysBindingTable) {
+            if (altKeysBindingTable[item] == e.key && e.locale == "ru-RU") {
+                return true;
+            }
+        } 
+        return false;
     }
 
     function _capsLockIsActive(key, shift) {
